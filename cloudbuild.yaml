@@ -1,0 +1,36 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/king-dap-learning-sandbox/aa-demo-flask-app:${_COMMIT_SHA}', '.']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/king-dap-learning-sandbox/aa-demo-flask-app:${_COMMIT_SHA}']
+
+- name: 'python'
+  entrypoint: 'bash'
+  args:
+   - '-c'
+   - |
+      pip install -r requirements.txt
+      pip install pytest
+      python -m pytest
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+   - 'run'
+   - 'deploy'
+   - 'aa-demo-flask-app'
+   - '--image'
+   - 'gcr.io/king-dap-learning-sandbox/aa-demo-flask-app:${_COMMIT_SHA}'
+   - '--region'
+   - 'europe-west1'
+   - '--allow-unauthenticated'
+
+images:
+- 'gcr.io/king-dap-learning-sandbox/aa-demo-flask-app:${_COMMIT_SHA}'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+#substitutions:
+#  _COMMIT_SHA: 'latest'
