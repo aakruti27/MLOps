@@ -32,5 +32,5 @@ images:
 options:
   logging: CLOUD_LOGGING_ONLY
 
-#substitutions:
-#  _COMMIT_SHA: 'latest'
+substitutions:
+  _COMMIT_SHA: 'latest'
